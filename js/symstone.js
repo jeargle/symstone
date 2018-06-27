@@ -1,106 +1,172 @@
-var score, bootState, loadState, titleState, playState, endState, game;
+var score, bootScene, loadScene, titleScene, playScene, endScene, game;
 
 score = 0;
 
-bootState = {
+bootScene = {
+    key: 'boot',
+    active: true,
+    init: (config) => {
+        console.log('[BOOT] init', config);
+    },
+    preload: () => {
+        console.log('[BOOT] preload');
+    },
     create: function() {
         'use strict';
 
-        // Load physics engine
-        game.physics.startSystem(Phaser.Physics.ARCADE);
-        game.state.start('load');
+        game.scene.start('load');
+        game.scene.remove('boot');
+    },
+    update: () => {
+        console.log('[BOOT] update');
     }
 };
 
-loadState = {
+loadScene = {
+    key: 'load',
+    // active: true,
+    renderToTexture: true,
+    x: 64,
+    y: 64,
+    width: 320,
+    height: 200,
+    init: (config) => {
+        console.log('[LOAD] init', config);
+    },
     preload: function() {
         'use strict';
         var loadLbl;
 
-        loadLbl = game.add.text(80, 160, 'loading...',
+        loadLbl = this.add.text(80, 160, 'loading...',
                                 {font: '30px Courier',
                                  fill: '#ffffff'});
-        
+
         // Load images
 
         // Load sound effects
     },
     create: function() {
         'use strict';
-        game.state.start('title');
+        game.scene.start('title');
+        game.scene.remove('load');
+    },
+    update: () => {
+        console.log('[LOAD] update');
     }
 };
 
-titleState = {
+titleScene = {
+    key: 'title',
+    init: (config) => {
+        console.log('[TITLE] init', config);
+    },
+    preload: () => {
+        console.log('[TITLE] preload');
+    },
     create: function() {
         'use strict';
-        var nameLbl, startLbl, wKey;
+        var nameLbl, startLbl;
 
-        nameLbl = game.add.text(80, 160, 'SYMSTONE',
+        nameLbl = this.add.text(80, 160, 'SYMSTONE',
                                 {font: '50px Courier',
                                  fill: '#ffffff'});
-        startLbl = game.add.text(80, 240, 'press "W" to start',
+        startLbl = this.add.text(80, 240, 'press "W" to start',
                                  {font: '30px Courier',
                                   fill: '#ffffff'});
 
-        wKey = game.input.keyboard.addKey(Phaser.Keyboard.W);
-        wKey.onDown.addOnce(this.start, this);
+        // wKey = game.input.keyboard.addKey(Phaser.Keyboard.W);
+        // wKey.onDown.addOnce(this.start, this);
+        this.input.keyboard.on('keydown_W', this.start, this);
     },
-    start: function() {
-        'use strict';
-        game.state.start('play');
+    update: () => {
+        console.log('[TITLE] update');
+    },
+    extend: {
+        start: function() {
+            'use strict';
+            game.scene.start('play');
+            game.scene.remove('title');
+        }
     }
 };
 
-playState = {
+playScene = {
+    key: 'play',
     create: function() {
         'use strict';
 
-        this.keyboard = game.input.keyboard;
+        // this.keyboard = game.input.keyboard;
 
         // Controls
+
+        this.input.keyboard.on('keydown_E', this.end, this);
     },
     update: function() {
         'use strict';
-
+        console.log('[PLAY] update');
     },
-    end: function() {
-        'use strict';
-        game.state.start('end');
+    extend: {
+        end: function() {
+            'use strict';
+            game.scene.start('end');
+            game.scene.remove('play');
+        }
     }
 };
 
-endState = {
+endScene = {
+    key: 'end',
     create: function() {
         'use strict';
         var scoreLbl, nameLbl, startLbl, wKey;
 
-        scoreLbl = game.add.text(600, 10, 'Score: ' + score,
+        scoreLbl = this.add.text(600, 10, 'Score: ' + score,
                                  {font: '30px Courier',
                                   fill: '#ffffff'});
-        nameLbl = game.add.text(80, 160, 'YOU WIN',
+        nameLbl = this.add.text(80, 160, 'YOU WIN',
                                 {font: '50px Courier',
                                  fill: '#ffffff'});
-        startLbl = game.add.text(80, 240, 'press "W" to restart',
+        startLbl = this.add.text(80, 240, 'press "W" to restart',
                                  {font: '30px Courier',
                                   fill: '#ffffff'});
 
-        wKey = game.input.keyboard.addKey(Phaser.Keyboard.W);
-        wKey.onDown.addOnce(this.restart, this);
+        this.input.keyboard.on('keydown_W', this.restart, this);
     },
-    restart: function() {
+    update: function() {
         'use strict';
-        game.state.start('title');
+        console.log('[END] update');
+    },
+    extend: {
+        restart: function() {
+            'use strict';
+            console.log('[END] restart');
+            game.scene.start('title');
+            game.scene.remove('end');
+        }
     }
 };
 
 
-game = new Phaser.Game(800, 600, Phaser.AUTO, 'game-div');
+const gameConfig = {
+    type: Phaser.CANVAS,
+    parent: 'game-div',
+    width: 800,
+    height: 600,
+    physics: {
+        default: 'arcade',
+        arcade: {
+            debug: true,
+            gravity: {
+                y: 600
+            },
+            height: 775,
+            width: 1600,
+            x: 0,
+            y: -200
+        }
+    },
+    scene: [ bootScene, loadScene, titleScene, playScene, endScene ]
+};
 
-game.state.add('boot', bootState);
-game.state.add('load', loadState);
-game.state.add('title', titleState);
-game.state.add('play', playState);
-game.state.add('end', endState);
-
-game.state.start('boot');
+game = new Phaser.Game(gameConfig);
+game.scene.start('boot', { someData: '...arbitrary data' });
