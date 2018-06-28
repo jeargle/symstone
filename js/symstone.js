@@ -84,8 +84,8 @@ titleScene = {
     extend: {
         start: function() {
             'use strict';
-            game.scene.start('play');
-            game.scene.remove('title');
+            console.log('[TITLE] start');
+            game.scene.switch('title', 'play');
         }
     }
 };
@@ -108,8 +108,8 @@ playScene = {
     extend: {
         end: function() {
             'use strict';
-            game.scene.start('end');
-            game.scene.remove('play');
+            console.log('[PLAY] end');
+            game.scene.switch('play', 'end')
         }
     }
 };
@@ -140,8 +140,7 @@ endScene = {
         restart: function() {
             'use strict';
             console.log('[END] restart');
-            game.scene.start('title');
-            game.scene.remove('end');
+            game.scene.switch('end', 'title');
         }
     }
 };
