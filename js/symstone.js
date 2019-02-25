@@ -6,21 +6,21 @@ bootScene = {
     key: 'boot',
     active: true,
     init: (config) => {
-        console.log('[BOOT] init', config);
+        console.log('[BOOT] init', config)
     },
     preload: () => {
-        console.log('[BOOT] preload');
+        console.log('[BOOT] preload')
     },
     create: function() {
-        'use strict';
+        'use strict'
 
-        game.scene.start('load');
-        game.scene.remove('boot');
+        game.scene.start('load')
+        game.scene.remove('boot')
     },
     update: () => {
-        console.log('[BOOT] update');
+        console.log('[BOOT] update')
     }
-};
+}
 
 loadScene = {
     key: 'load',
@@ -31,119 +31,119 @@ loadScene = {
     width: 320,
     height: 200,
     init: (config) => {
-        console.log('[LOAD] init', config);
+        console.log('[LOAD] init', config)
     },
     preload: function() {
-        'use strict';
-        var loadLbl;
+        'use strict'
+        var loadLbl
 
         loadLbl = this.add.text(80, 160, 'loading...',
                                 {font: '30px Courier',
-                                 fill: '#ffffff'});
+                                 fill: '#ffffff'})
 
         // Load images
 
         // Load sound effects
     },
     create: function() {
-        'use strict';
-        game.scene.start('title');
-        game.scene.remove('load');
+        'use strict'
+        game.scene.start('title')
+        game.scene.remove('load')
     },
     update: () => {
-        console.log('[LOAD] update');
+        console.log('[LOAD] update')
     }
-};
+}
 
 titleScene = {
     key: 'title',
     init: (config) => {
-        console.log('[TITLE] init', config);
+        console.log('[TITLE] init', config)
     },
     preload: () => {
-        console.log('[TITLE] preload');
+        console.log('[TITLE] preload')
     },
     create: function() {
-        'use strict';
-        var nameLbl, startLbl;
+        'use strict'
+        var nameLbl, startLbl
 
         nameLbl = this.add.text(80, 160, 'SYMSTONE',
                                 {font: '50px Courier',
-                                 fill: '#ffffff'});
+                                 fill: '#ffffff'})
         startLbl = this.add.text(80, 240, 'press "W" to start',
                                  {font: '30px Courier',
-                                  fill: '#ffffff'});
+                                  fill: '#ffffff'})
 
-        // wKey = game.input.keyboard.addKey(Phaser.Keyboard.W);
-        // wKey.onDown.addOnce(this.start, this);
-        this.input.keyboard.on('keydown_W', this.start, this);
+        // wKey = game.input.keyboard.addKey(Phaser.Keyboard.W)
+        // wKey.onDown.addOnce(this.start, this)
+        this.input.keyboard.on('keydown_W', this.start, this)
     },
     update: () => {
-        console.log('[TITLE] update');
+        console.log('[TITLE] update')
     },
     extend: {
         start: function() {
-            'use strict';
-            console.log('[TITLE] start');
-            game.scene.switch('title', 'play');
+            'use strict'
+            console.log('[TITLE] start')
+            game.scene.switch('title', 'play')
         }
     }
-};
+}
 
 playScene = {
     key: 'play',
     create: function() {
-        'use strict';
+        'use strict'
 
-        // this.keyboard = game.input.keyboard;
+        // this.keyboard = game.input.keyboard
 
         // Controls
 
-        this.input.keyboard.on('keydown_E', this.end, this);
+        this.input.keyboard.on('keydown_E', this.end, this)
     },
     update: function() {
-        'use strict';
-        console.log('[PLAY] update');
+        'use strict'
+        console.log('[PLAY] update')
     },
     extend: {
         end: function() {
-            'use strict';
-            console.log('[PLAY] end');
+            'use strict'
+            console.log('[PLAY] end')
             game.scene.switch('play', 'end')
         }
     }
-};
+}
 
 endScene = {
     key: 'end',
     create: function() {
-        'use strict';
-        var scoreLbl, nameLbl, startLbl, wKey;
+        'use strict'
+        var scoreLbl, nameLbl, startLbl, wKey
 
         scoreLbl = this.add.text(600, 10, 'Score: ' + score,
                                  {font: '30px Courier',
-                                  fill: '#ffffff'});
+                                  fill: '#ffffff'})
         nameLbl = this.add.text(80, 160, 'YOU WIN',
                                 {font: '50px Courier',
-                                 fill: '#ffffff'});
+                                 fill: '#ffffff'})
         startLbl = this.add.text(80, 240, 'press "W" to restart',
                                  {font: '30px Courier',
-                                  fill: '#ffffff'});
+                                  fill: '#ffffff'})
 
-        this.input.keyboard.on('keydown_W', this.restart, this);
+        this.input.keyboard.on('keydown_W', this.restart, this)
     },
     update: function() {
-        'use strict';
-        console.log('[END] update');
+        'use strict'
+        console.log('[END] update')
     },
     extend: {
         restart: function() {
-            'use strict';
-            console.log('[END] restart');
-            game.scene.switch('end', 'title');
+            'use strict'
+            console.log('[END] restart')
+            game.scene.switch('end', 'title')
         }
     }
-};
+}
 
 
 const gameConfig = {
@@ -165,7 +165,7 @@ const gameConfig = {
         }
     },
     scene: [ bootScene, loadScene, titleScene, playScene, endScene ]
-};
+}
 
-game = new Phaser.Game(gameConfig);
-game.scene.start('boot', { someData: '...arbitrary data' });
+game = new Phaser.Game(gameConfig)
+game.scene.start('boot', { someData: '...arbitrary data' })
