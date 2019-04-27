@@ -2,38 +2,41 @@ let score, bootScene, loadScene, titleScene, playScene, endScene, game;
 
 score = 0;
 
-bootScene = {
-    key: 'boot',
-    active: true,
-    init: (config) => {
+class BootScene extends Phaser.Scene {
+    constructor() {
+        super('boot')
+    }
+
+    init(config) {
         console.log('[BOOT] init', config)
-    },
-    preload: () => {
+    }
+
+    preload() {
         console.log('[BOOT] preload')
-    },
-    create: function() {
+    }
+
+    create() {
         'use strict'
 
         game.scene.start('load')
         game.scene.remove('boot')
-    },
-    update: () => {
+    }
+
+    update() {
         console.log('[BOOT] update')
     }
 }
 
-loadScene = {
-    key: 'load',
-    // active: true,
-    renderToTexture: true,
-    x: 64,
-    y: 64,
-    width: 320,
-    height: 200,
-    init: (config) => {
+class LoadScene extends Phaser.Scene {
+    constructor() {
+        super('load')
+    }
+
+    init(config) {
         console.log('[LOAD] init', config)
-    },
-    preload: function() {
+    }
+
+    preload() {
         'use strict'
 
         this.add.text(80, 160, 'loading...',
@@ -43,26 +46,33 @@ loadScene = {
         // Load images
 
         // Load sound effects
-    },
-    create: function() {
+    }
+
+    create() {
         'use strict'
         game.scene.start('title')
         game.scene.remove('load')
-    },
-    update: () => {
+    }
+
+    update() {
         console.log('[LOAD] update')
     }
 }
 
-titleScene = {
-    key: 'title',
-    init: (config) => {
+class TitleScene extends Phaser.Scene {
+    constructor() {
+        super('title')
+    }
+
+    init(config) {
         console.log('[TITLE] init', config)
-    },
-    preload: () => {
+    }
+
+    preload() {
         console.log('[TITLE] preload')
-    },
-    create: function() {
+    }
+
+    create() {
         'use strict'
 
         this.add.text(80, 160, 'SYMSTONE',
@@ -73,22 +83,25 @@ titleScene = {
                        fill: '#ffffff'})
 
         this.input.keyboard.on('keydown_W', this.start, this)
-    },
-    update: () => {
+    }
+
+    update() {
         console.log('[TITLE] update')
-    },
-    extend: {
-        start: function() {
-            'use strict'
-            console.log('[TITLE] start')
-            game.scene.switch('title', 'play')
-        }
+    }
+
+    start() {
+        'use strict'
+        console.log('[TITLE] start')
+        game.scene.switch('title', 'play')
     }
 }
 
-playScene = {
-    key: 'play',
-    create: function() {
+class PlayScene extends Phaser.Scene {
+    constructor() {
+        super('play')
+    }
+
+    create() {
         'use strict'
 
         // this.keyboard = game.input.keyboard
@@ -96,23 +109,26 @@ playScene = {
         // Controls
 
         this.input.keyboard.on('keydown_E', this.end, this)
-    },
-    update: function() {
+    }
+
+    update() {
         'use strict'
         console.log('[PLAY] update')
-    },
-    extend: {
-        end: function() {
-            'use strict'
-            console.log('[PLAY] end')
-            game.scene.switch('play', 'end')
-        }
+    }
+
+    end() {
+        'use strict'
+        console.log('[PLAY] end')
+        game.scene.switch('play', 'end')
     }
 }
 
-endScene = {
-    key: 'end',
-    create: function() {
+class EndScene extends Phaser.Scene {
+    constructor() {
+        super('end')
+    }
+
+    create() {
         'use strict'
 
         this.add.text(600, 10, 'Score: ' + score,
@@ -126,17 +142,17 @@ endScene = {
                        fill: '#ffffff'})
 
         this.input.keyboard.on('keydown_W', this.restart, this)
-    },
-    update: function() {
+    }
+
+    update() {
         'use strict'
         console.log('[END] update')
-    },
-    extend: {
-        restart: function() {
-            'use strict'
-            console.log('[END] restart')
-            game.scene.switch('end', 'title')
-        }
+    }
+
+    restart() {
+        'use strict'
+        console.log('[END] restart')
+        game.scene.switch('end', 'title')
     }
 }
 
@@ -159,7 +175,13 @@ const gameConfig = {
             y: -200
         }
     },
-    scene: [ bootScene, loadScene, titleScene, playScene, endScene ]
+    scene: [
+        BootScene,
+        LoadScene,
+        TitleScene,
+        PlayScene,
+        EndScene
+    ]
 }
 
 game = new Phaser.Game(gameConfig)
