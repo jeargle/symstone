@@ -1,6 +1,6 @@
-let score, bootScene, loadScene, titleScene, playScene, endScene, game;
+let score, game
 
-score = 0;
+score = 0
 
 class BootScene extends Phaser.Scene {
     constructor() {
