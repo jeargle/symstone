@@ -75,7 +75,7 @@ class TitleScene extends Phaser.Scene {
                       {font: '30px Courier',
                        fill: '#ffffff'})
 
-        this.input.keyboard.on('keydown_W', this.start, this)
+        this.input.keyboard.on('keydown-W', this.start, this)
     }
 
     update() {
@@ -98,7 +98,7 @@ class PlayScene extends Phaser.Scene {
 
         // Controls
 
-        this.input.keyboard.on('keydown_E', this.end, this)
+        this.input.keyboard.on('keydown-E', this.end, this)
     }
 
     update() {
@@ -127,7 +127,7 @@ class EndScene extends Phaser.Scene {
                       {font: '30px Courier',
                        fill: '#ffffff'})
 
-        this.input.keyboard.on('keydown_W', this.restart, this)
+        this.input.keyboard.on('keydown-W', this.restart, this)
     }
 
     update() {
