@@ -96,16 +96,19 @@ class PlayScene extends Phaser.Scene {
     create() {
         let that = this;
 
+        this.mainLine = this.add.line(0, 0, 0, 300, 800, 300, 0x888888).setOrigin(0);
+        this.sideLine = this.add.line(0, 0, 700, 0, 700, 600, 0x888888).setOrigin(0);
+
         // mainBoardStones
         this.mainBoardStones = this.physics.add.group({
             key: 'stone',
             active: false,
             repeat: 30,
             setXY: { x: 0, y: -300},
-        })
-        this.mainBoardStones.children.iterate(function(enemy) {
-            that.mainBoardStones.killAndHide(enemy)
-        })
+        });
+        this.mainBoardStones.children.iterate(enemy => {
+            that.mainBoardStones.killAndHide(enemy);
+        });
 
         // userBoardStones
         this.userBoardStones = this.physics.add.group({
@@ -113,10 +116,10 @@ class PlayScene extends Phaser.Scene {
             active: false,
             repeat: 30,
             setXY: { x: 0, y: -300},
-        })
-        this.userBoardStones.children.iterate(function(enemy) {
-            that.userBoardStones.killAndHide(enemy)
-        })
+        });
+        this.userBoardStones.children.iterate(enemy => {
+            that.userBoardStones.killAndHide(enemy);
+        });
 
         // mainSideStones
         this.mainSideStones = this.physics.add.group({
@@ -124,10 +127,10 @@ class PlayScene extends Phaser.Scene {
             active: false,
             repeat: 30,
             setXY: { x: 0, y: -300},
-        })
-        this.mainSideStones.children.iterate(function(enemy) {
-            that.mainSideStones.killAndHide(enemy)
-        })
+        });
+        this.mainSideStones.children.iterate(enemy => {
+            that.mainSideStones.killAndHide(enemy);
+        });
 
         // userSideStones
         this.userSideStones = this.physics.add.group({
@@ -135,16 +138,18 @@ class PlayScene extends Phaser.Scene {
             active: false,
             repeat: 30,
             setXY: { x: 0, y: -300},
-        })
-        this.userSideStones.children.iterate(function(enemy) {
-            that.userSideStones.killAndHide(enemy)
-        })
+        });
+        this.userSideStones.children.iterate(enemy => {
+            that.userSideStones.killAndHide(enemy);
+        });
+
+        // Center line
 
         // Controls
         // this.input.keyboard.on('keydown-E', this.end, this);
         this.keyControls = this.input.keyboard.addKeys({
             'end': Phaser.Input.Keyboard.KeyCodes.E,
-        })
+        });
     }
 
     update() {
@@ -211,14 +216,7 @@ const gameConfig = {
     physics: {
         default: 'arcade',
         arcade: {
-            debug: true,
-            gravity: {
-                y: 600
-            },
-            height: 775,
-            width: 1600,
-            x: 0,
-            y: -200
+            // debug: true,
         }
     },
     scene: [
