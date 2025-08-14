@@ -90,24 +90,86 @@ class TitleScene extends Phaser.Scene {
 
 class PlayScene extends Phaser.Scene {
     constructor() {
-        super('play')
+        super('play');
     }
 
     create() {
-        // this.keyboard = game.input.keyboard
+        let that = this;
+
+        // mainBoardStones
+        this.mainBoardStones = this.physics.add.group({
+            key: 'stone',
+            active: false,
+            repeat: 30,
+            setXY: { x: 0, y: -300},
+        })
+        this.mainBoardStones.children.iterate(function(enemy) {
+            that.mainBoardStones.killAndHide(enemy)
+        })
+
+        // userBoardStones
+        this.userBoardStones = this.physics.add.group({
+            key: 'stone',
+            active: false,
+            repeat: 30,
+            setXY: { x: 0, y: -300},
+        })
+        this.userBoardStones.children.iterate(function(enemy) {
+            that.userBoardStones.killAndHide(enemy)
+        })
+
+        // mainSideStones
+        this.mainSideStones = this.physics.add.group({
+            key: 'stone',
+            active: false,
+            repeat: 30,
+            setXY: { x: 0, y: -300},
+        })
+        this.mainSideStones.children.iterate(function(enemy) {
+            that.mainSideStones.killAndHide(enemy)
+        })
+
+        // userSideStones
+        this.userSideStones = this.physics.add.group({
+            key: 'stone',
+            active: false,
+            repeat: 30,
+            setXY: { x: 0, y: -300},
+        })
+        this.userSideStones.children.iterate(function(enemy) {
+            that.userSideStones.killAndHide(enemy)
+        })
 
         // Controls
-
-        this.input.keyboard.on('keydown-E', this.end, this)
+        // this.input.keyboard.on('keydown-E', this.end, this);
+        this.keyControls = this.input.keyboard.addKeys({
+            'end': Phaser.Input.Keyboard.KeyCodes.E,
+        })
     }
 
     update() {
-        console.log('[PLAY] update')
+        console.log('[PLAY] update');
+
+        if (this.keyControls.end.isDown) {
+            this.end();
+        }
+
+    }
+
+    /**
+     * Add a single enemy to the screen.
+     */
+    addStone() {
+        let stone;
+
+        console.log('addStone()');
+
+        stone = this.mainSideStones.getFirstDead(false);
     }
 
     end() {
-        console.log('[PLAY] end')
-        game.scene.switch('play', 'end')
+        console.log('[PLAY] end');
+        game.scene.switch('play', 'end');
     }
 }
 
