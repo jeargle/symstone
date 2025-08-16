@@ -111,14 +111,52 @@ class PlayScene extends Phaser.Scene {
 
         // mainSideStones
         this.mainSideStones = [];
-        [30, 60, 90, 120, 150, 180].forEach(x => {
-            this.mainSideStones.push(this.add.circle(750, x, stoneRadius, stoneColor));
+        [30, 60, 90, 120, 150, 180].forEach((x, i) => {
+            let stone = this.add.circle(750, x, stoneRadius, stoneColor);
+
+            stone.setInteractive();
+            stone.setStrokeStyle(1, 0x000000);
+            stone.data = {
+                index: i,
+                state: "off",
+            };
+
+            stone.on('pointerdown', function (pointer, localX, localY, event) {
+                if (stone.data.state === "off") {
+                    stone.data.state = "on";
+                    stone.setFillStyle(0xeeeeee);
+                } else {
+                    stone.data.state = "off";
+                    stone.setFillStyle(stoneColor);
+                }
+            });
+
+            this.mainSideStones.push(stone);
         });
 
         // userSideStones
         this.userSideStones = [];
-        [330, 360, 390, 420, 450, 480].forEach(x => {
-            this.userSideStones.push(this.add.circle(750, x, stoneRadius, stoneColor));
+        [330, 360, 390, 420, 450, 480].forEach((x, i) => {
+            let stone = this.add.circle(750, x, stoneRadius, stoneColor);
+
+            stone.setInteractive();
+            stone.setStrokeStyle(1, 0x000000);
+            stone.data = {
+                index: i,
+                state: "off",
+            };
+
+            stone.on('pointerdown', function (pointer, localX, localY, event) {
+                if (stone.data.state === "off") {
+                    stone.data.state = "on";
+                    stone.setFillStyle(0xeeeeee);
+                } else {
+                    stone.data.state = "off";
+                    stone.setFillStyle(stoneColor);
+                }
+            });
+
+            this.userSideStones.push(stone)
         });
 
         /** Controls **/
@@ -130,7 +168,7 @@ class PlayScene extends Phaser.Scene {
     }
 
     update() {
-        console.log('[PLAY] update');
+        // console.log('[PLAY] update');
 
         if (this.keyControls.end.isDown) {
             this.end();
@@ -203,12 +241,6 @@ const gameConfig = {
     parent: 'game-div',
     width: 800,
     height: 600,
-    // physics: {
-    //     default: 'arcade',
-    //     arcade: {
-    //         // debug: true,
-    //     }
-    // },
     scene: [
         BootScene,
         LoadScene,
