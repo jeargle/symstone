@@ -96,60 +96,37 @@ class PlayScene extends Phaser.Scene {
     create() {
         let that = this;
 
-        this.mainLine = this.add.line(0, 0, 0, 300, 800, 300, 0x888888).setOrigin(0);
-        this.sideLine = this.add.line(0, 0, 700, 0, 700, 600, 0x888888).setOrigin(0);
+        /** Lines **/
+        const lineColor = 0x888888;
+        this.mainLine = this.add.line(0, 0, 0, 300, 800, 300, lineColor).setOrigin(0);
+        this.sideLine = this.add.line(0, 0, 700, 0, 700, 600, lineColor).setOrigin(0);
+
+        /** Stones **/
+        const stoneColor = 0x888888;
+        const stoneRadius = 10;
 
         // mainBoardStones
-        this.mainBoardStones = this.physics.add.group({
-            key: 'stone',
-            active: false,
-            repeat: 30,
-            setXY: { x: 0, y: -300},
-        });
-        this.mainBoardStones.children.iterate(enemy => {
-            that.mainBoardStones.killAndHide(enemy);
-        });
 
         // userBoardStones
-        this.userBoardStones = this.physics.add.group({
-            key: 'stone',
-            active: false,
-            repeat: 30,
-            setXY: { x: 0, y: -300},
-        });
-        this.userBoardStones.children.iterate(enemy => {
-            that.userBoardStones.killAndHide(enemy);
-        });
 
         // mainSideStones
-        this.mainSideStones = this.physics.add.group({
-            key: 'stone',
-            active: false,
-            repeat: 30,
-            setXY: { x: 0, y: -300},
-        });
-        this.mainSideStones.children.iterate(enemy => {
-            that.mainSideStones.killAndHide(enemy);
+        this.mainSideStones = [];
+        [30, 60, 90, 120, 150, 180].forEach(x => {
+            this.mainSideStones.push(this.add.circle(750, x, stoneRadius, stoneColor));
         });
 
         // userSideStones
-        this.userSideStones = this.physics.add.group({
-            key: 'stone',
-            active: false,
-            repeat: 30,
-            setXY: { x: 0, y: -300},
-        });
-        this.userSideStones.children.iterate(enemy => {
-            that.userSideStones.killAndHide(enemy);
+        this.userSideStones = [];
+        [330, 360, 390, 420, 450, 480].forEach(x => {
+            this.userSideStones.push(this.add.circle(750, x, stoneRadius, stoneColor));
         });
 
-        // Center line
-
-        // Controls
-        // this.input.keyboard.on('keydown-E', this.end, this);
+        /** Controls **/
         this.keyControls = this.input.keyboard.addKeys({
             'end': Phaser.Input.Keyboard.KeyCodes.E,
         });
+
+        this.input.mouse.disableContextMenu();
     }
 
     update() {
@@ -159,6 +136,19 @@ class PlayScene extends Phaser.Scene {
             this.end();
         }
 
+        let pointer = this.input.activePointer;
+
+        // if (pointer.isDown) {
+        //     console.log(`Button (${pointer.worldX}, ${pointer.worldY})`);
+        // }
+
+        if (pointer.rightButtonDown()) {
+            console.log(`Right Button (${pointer.worldX}, ${pointer.worldY})`);
+        }
+
+        if (pointer.leftButtonDown()) {
+            console.log(`Left Button (${pointer.worldX}, ${pointer.worldY})`);
+        }
     }
 
     /**
@@ -213,12 +203,12 @@ const gameConfig = {
     parent: 'game-div',
     width: 800,
     height: 600,
-    physics: {
-        default: 'arcade',
-        arcade: {
-            // debug: true,
-        }
-    },
+    // physics: {
+    //     default: 'arcade',
+    //     arcade: {
+    //         // debug: true,
+    //     }
+    // },
     scene: [
         BootScene,
         LoadScene,
