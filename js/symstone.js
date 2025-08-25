@@ -104,14 +104,30 @@ class PlayScene extends Phaser.Scene {
         /** Stones **/
 
         // mainBoardStones
+        this.mainBoardStones = this.circlePositions([350, 150], 100, 6)
+            .map(this.createStone, that);
 
         // userBoardStones
+        this.userBoardStones = this.circlePositions([350, 450], 100, 6)
+            .map(this.createStone, that);
 
         // mainSideStones
-        this.mainSideStones = [30, 60, 90, 120, 150, 180].map(this.createStone, that);
+        this.mainSideStones = [
+            [750, 30],
+            [750, 60],
+            [750, 90],
+            [750, 120],
+            [750, 150],
+            [750, 180]].map(this.createStone, that);
 
         // userSideStones
-        this.userSideStones = [330, 360, 390, 420, 450, 480].map(this.createStone, that);
+        this.userSideStones = [
+            [750, 330],
+            [750, 360],
+            [750, 390],
+            [750, 420],
+            [750, 450],
+            [750, 480]].map(this.createStone, that);
 
         /** Controls **/
         this.keyControls = this.input.keyboard.addKeys({
@@ -121,16 +137,18 @@ class PlayScene extends Phaser.Scene {
         this.input.mouse.disableContextMenu();
     }
 
-    createStone(x, i) {
+    createStone(position, index) {
+        const x=position[0];
+        const y=position[1];
         const stoneColor = 0x888888;
         const stoneRadius = 10;
 
-        let stone = this.add.circle(750, x, stoneRadius, stoneColor);
+        let stone = this.add.circle(x, y, stoneRadius, stoneColor);
 
         stone.setInteractive();
         stone.setStrokeStyle(1, 0x000000);
         stone.data = {
-            index: i,
+            index,
             state: 'off',
         };
 
@@ -142,10 +160,29 @@ class PlayScene extends Phaser.Scene {
                 stone.data.state = 'off';
                 stone.setFillStyle(stoneColor);
             }
+            console.log(stone.data.index);
         });
     }
 
+    circlePositions(origin, radius, order) {
+        // let angle = Math.PI/2;
+        const angleDiff = 2*Math.PI/order;
+        const positions = [];
+        let angle=Math.PI/2;
+        // let angle=0;
+        for (let i=0; i<order; i++) {
+            const tempAngle = angle + angleDiff*i;
+            const diffX = Math.cos(tempAngle) * radius;
+            const diffY = -Math.sin(tempAngle) * radius;
+            console.log(`diffX(${tempAngle}) = ${diffX}`);
+            console.log(`diffY(${tempAngle}) = ${diffY}`);
+            positions.push([origin[0] + diffX, origin[1] + diffY]);
+            // angle -= angleDiff;
+        }
+        console.log(positions);
 
+        return positions;
+    }
 
     update() {
         // console.log('[PLAY] update');
