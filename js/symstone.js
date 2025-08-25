@@ -1,6 +1,6 @@
-let score, game
+let score, game;
 
-score = 0
+score = 0;
 
 class BootScene extends Phaser.Scene {
     constructor() {
@@ -102,62 +102,16 @@ class PlayScene extends Phaser.Scene {
         this.sideLine = this.add.line(0, 0, 700, 0, 700, 600, lineColor).setOrigin(0);
 
         /** Stones **/
-        const stoneColor = 0x888888;
-        const stoneRadius = 10;
 
         // mainBoardStones
 
         // userBoardStones
 
         // mainSideStones
-        this.mainSideStones = [];
-        [30, 60, 90, 120, 150, 180].forEach((x, i) => {
-            let stone = this.add.circle(750, x, stoneRadius, stoneColor);
-
-            stone.setInteractive();
-            stone.setStrokeStyle(1, 0x000000);
-            stone.data = {
-                index: i,
-                state: "off",
-            };
-
-            stone.on('pointerdown', function (pointer, localX, localY, event) {
-                if (stone.data.state === "off") {
-                    stone.data.state = "on";
-                    stone.setFillStyle(0xeeeeee);
-                } else {
-                    stone.data.state = "off";
-                    stone.setFillStyle(stoneColor);
-                }
-            });
-
-            this.mainSideStones.push(stone);
-        });
+        this.mainSideStones = [30, 60, 90, 120, 150, 180].map(this.createStone, that);
 
         // userSideStones
-        this.userSideStones = [];
-        [330, 360, 390, 420, 450, 480].forEach((x, i) => {
-            let stone = this.add.circle(750, x, stoneRadius, stoneColor);
-
-            stone.setInteractive();
-            stone.setStrokeStyle(1, 0x000000);
-            stone.data = {
-                index: i,
-                state: "off",
-            };
-
-            stone.on('pointerdown', function (pointer, localX, localY, event) {
-                if (stone.data.state === "off") {
-                    stone.data.state = "on";
-                    stone.setFillStyle(0xeeeeee);
-                } else {
-                    stone.data.state = "off";
-                    stone.setFillStyle(stoneColor);
-                }
-            });
-
-            this.userSideStones.push(stone)
-        });
+        this.userSideStones = [330, 360, 390, 420, 450, 480].map(this.createStone, that);
 
         /** Controls **/
         this.keyControls = this.input.keyboard.addKeys({
@@ -167,6 +121,32 @@ class PlayScene extends Phaser.Scene {
         this.input.mouse.disableContextMenu();
     }
 
+    createStone(x, i) {
+        const stoneColor = 0x888888;
+        const stoneRadius = 10;
+
+        let stone = this.add.circle(750, x, stoneRadius, stoneColor);
+
+        stone.setInteractive();
+        stone.setStrokeStyle(1, 0x000000);
+        stone.data = {
+            index: i,
+            state: 'off',
+        };
+
+        stone.on('pointerdown', function (pointer, localX, localY, event) {
+            if (stone.data.state === 'off') {
+                stone.data.state = 'on';
+                stone.setFillStyle(0xeeeeee);
+            } else {
+                stone.data.state = 'off';
+                stone.setFillStyle(stoneColor);
+            }
+        });
+    }
+
+
+
     update() {
         // console.log('[PLAY] update');
 
@@ -175,10 +155,6 @@ class PlayScene extends Phaser.Scene {
         }
 
         let pointer = this.input.activePointer;
-
-        // if (pointer.isDown) {
-        //     console.log(`Button (${pointer.worldX}, ${pointer.worldY})`);
-        // }
 
         if (pointer.rightButtonDown()) {
             console.log(`Right Button (${pointer.worldX}, ${pointer.worldY})`);
