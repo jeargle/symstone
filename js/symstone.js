@@ -102,32 +102,25 @@ class PlayScene extends Phaser.Scene {
         this.sideLine = this.add.line(0, 0, 700, 0, 700, 600, lineColor).setOrigin(0);
 
         /** Stones **/
+        const order = 6;
+        const sideStepSize = 30;
+        const boardRadius = 100;
 
         // mainBoardStones
-        this.mainBoardStones = this.circlePositions([350, 150], 100, 6)
+        this.mainBoardStones = this.circlePositions([350, 150], boardRadius, order)
             .map(this.createStone, that);
 
         // userBoardStones
-        this.userBoardStones = this.circlePositions([350, 450], 100, 6)
+        this.userBoardStones = this.circlePositions([350, 450], boardRadius, order)
             .map(this.createStone, that);
 
         // mainSideStones
-        this.mainSideStones = [
-            [750, 30],
-            [750, 60],
-            [750, 90],
-            [750, 120],
-            [750, 150],
-            [750, 180]].map(this.createStone, that);
+        this.mainSideStones = this.sidePositions([750, 30], sideStepSize, order)
+            .map(this.createStone, that);
 
         // userSideStones
-        this.userSideStones = [
-            [750, 330],
-            [750, 360],
-            [750, 390],
-            [750, 420],
-            [750, 450],
-            [750, 480]].map(this.createStone, that);
+        this.userSideStones = this.sidePositions([750, 330], sideStepSize, order)
+            .map(this.createStone, that);
 
         /** Controls **/
         this.keyControls = this.input.keyboard.addKeys({
@@ -160,26 +153,29 @@ class PlayScene extends Phaser.Scene {
                 stone.data.state = 'off';
                 stone.setFillStyle(stoneColor);
             }
-            console.log(stone.data.index);
         });
     }
 
+    sidePositions(origin, stepSize, order) {
+        const positions = [];
+        for (let i=0; i<order; i++) {
+            positions.push([origin[0], origin[1] + (i * stepSize)]);
+        }
+
+        return positions;
+    }
+
     circlePositions(origin, radius, order) {
-        // let angle = Math.PI/2;
         const angleDiff = 2*Math.PI/order;
         const positions = [];
         let angle=Math.PI/2;
-        // let angle=0;
+
         for (let i=0; i<order; i++) {
             const tempAngle = angle + angleDiff*i;
             const diffX = Math.cos(tempAngle) * radius;
             const diffY = -Math.sin(tempAngle) * radius;
-            console.log(`diffX(${tempAngle}) = ${diffX}`);
-            console.log(`diffY(${tempAngle}) = ${diffY}`);
             positions.push([origin[0] + diffX, origin[1] + diffY]);
-            // angle -= angleDiff;
         }
-        console.log(positions);
 
         return positions;
     }
