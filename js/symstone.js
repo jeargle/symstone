@@ -91,13 +91,38 @@ class TitleScene extends Phaser.Scene {
 class PlayScene extends Phaser.Scene {
     constructor() {
         super('play');
+
+        this.mainLine = null;
+        this.sideLine = null;
+
+        this.mainPanels = {
+            'board': {
+                'stones': null,
+                'edges': null,
+            },
+            'side': {
+                'stones': null,
+            },
+        };
+        this.userPanels = {
+            'board': {
+                'stones': null,
+                'edges': null,
+            },
+            'side': {
+                'stones': null,
+            },
+        };
+
     }
 
     create() {
         let that = this;
 
+
         /** Lines **/
         const lineColor = 0x888888;
+
         this.mainLine = this.add.line(0, 0, 0, 300, 800, 300, lineColor).setOrigin(0);
         this.sideLine = this.add.line(0, 0, 700, 0, 700, 600, lineColor).setOrigin(0);
 
@@ -106,21 +131,29 @@ class PlayScene extends Phaser.Scene {
         const sideStepSize = 30;
         const boardRadius = 100;
 
-        // mainBoardStones
-        this.mainBoardStones = this.circlePositions([350, 150], boardRadius, order)
+        // main board stones
+        this.mainPanels.board.stones = this.circlePositions([350, 150], boardRadius, order)
             .map(this.createStone, that);
 
-        // userBoardStones
-        this.userBoardStones = this.circlePositions([350, 450], boardRadius, order)
+        // user board stones
+        this.userPanels.board.stones = this.circlePositions([350, 450], boardRadius, order)
             .map(this.createStone, that);
 
-        // mainSideStones
-        this.mainSideStones = this.sidePositions([750, 30], sideStepSize, order)
+        // main side stones
+        this.mainPanels.side.stones = this.sidePositions([750, 30], sideStepSize, order)
             .map(this.createStone, that);
 
-        // userSideStones
-        this.userSideStones = this.sidePositions([750, 330], sideStepSize, order)
+        // user side stones
+        this.userPanels.side.stones = this.sidePositions([750, 330], sideStepSize, order)
             .map(this.createStone, that);
+
+        /** Edges **/
+
+        // main board edges
+        this.mainPanels.board.edges = this.createEdges(this.mainPanels.board.stones);
+
+        // userBoardEdges
+        this.userPanels.board.edges = this.createEdges(this.userPanels.board.stones);
 
         /** Controls **/
         this.keyControls = this.input.keyboard.addKeys({
@@ -131,8 +164,8 @@ class PlayScene extends Phaser.Scene {
     }
 
     createStone(position, index) {
-        const x=position[0];
-        const y=position[1];
+        const x = position[0];
+        const y = position[1];
         const stoneColor = 0x888888;
         const stoneRadius = 10;
 
@@ -158,6 +191,7 @@ class PlayScene extends Phaser.Scene {
 
     sidePositions(origin, stepSize, order) {
         const positions = [];
+
         for (let i=0; i<order; i++) {
             positions.push([origin[0], origin[1] + (i * stepSize)]);
         }
@@ -178,6 +212,9 @@ class PlayScene extends Phaser.Scene {
         }
 
         return positions;
+    }
+
+    createEdges(stones) {
     }
 
     update() {
