@@ -128,42 +128,51 @@ class PlayScene extends Phaser.Scene {
         this.sideLine = this.add.line(0, 0, 700, 0, 700, 600, lineColor).setOrigin(0);
 
         /** Stones **/
-        const order = 9;
+        const order = 4;
         const sideStepSize = 30;
         const boardRadius = 100;
 
         // main board stones
-        this.mainPanels.board.stones = this.circlePositions([350, 150], boardRadius, order)
+        let position = new Phaser.Math.Vector2(350, 150);
+        this.mainPanels.board.stones = this.circlePositions(position, boardRadius, order)
             .map(this.createStone, that);
 
         // user board stones
-        this.userPanels.board.stones = this.circlePositions([350, 450], boardRadius, order)
+        position = new Phaser.Math.Vector2(350, 450);
+        this.userPanels.board.stones = this.circlePositions(position, boardRadius, order)
             .map(this.createStone, that);
 
         // main side stones
-        this.mainPanels.side.stones = this.sidePositions([750, 30], sideStepSize, order)
+        position = new Phaser.Math.Vector2(750, 30);
+        this.mainPanels.side.stones = this.sidePositions(position, sideStepSize, order)
             .map(this.createStone, that);
 
         // user side stones
-        this.userPanels.side.stones = this.sidePositions([750, 330], sideStepSize, order)
+        position = new Phaser.Math.Vector2(750, 330);
+        this.userPanels.side.stones = this.sidePositions(position, sideStepSize, order)
             .map(this.createStone, that);
 
         /** Edges **/
+        const edgeOffsetScale = 25;
 
         // main board edges
         this.mainPanels.board.edges = this.createEdges(
             this.mainPanels.board.stones,
-            boardRadius,
+            edgeOffsetScale,
             order,
         );
         this.mainPanels.board.edges = this.createEdges(
             this.mainPanels.board.stones.reverse(),
-            boardRadius,
+            edgeOffsetScale,
             order,
         );
 
         // user board edges
-        this.userPanels.board.edges = this.createEdges(this.userPanels.board.stones, boardRadius, order);
+        this.userPanels.board.edges = this.createEdges(
+            this.userPanels.board.stones,
+            edgeOffsetScale,
+            order,
+        );
 
         /** Controls **/
         this.keyControls = this.input.keyboard.addKeys({
@@ -174,12 +183,9 @@ class PlayScene extends Phaser.Scene {
     }
 
     createStone(position, index) {
-        const x = position[0];
-        const y = position[1];
         const stoneColor = 0x888888;
         const stoneRadius = 10;
-
-        let stone = this.add.circle(x, y, stoneRadius, stoneColor);
+        let stone = this.add.circle(position.x, position.y, stoneRadius, stoneColor);
 
         stone.setInteractive();
         stone.setStrokeStyle(1, 0x000000);
@@ -205,7 +211,8 @@ class PlayScene extends Phaser.Scene {
         const positions = [];
 
         for (let i=0; i<order; i++) {
-            positions.push([origin[0], origin[1] + (i * stepSize)]);
+            const diff = new Phaser.Math.Vector2(0, i * stepSize);
+            positions.push(origin.clone().add(diff));
         }
 
         return positions;
@@ -214,63 +221,53 @@ class PlayScene extends Phaser.Scene {
     circlePositions(origin, radius, order) {
         const angleDiff = 2*Math.PI/order;
         const positions = [];
-        let angle=Math.PI/2;
+        const angle=Math.PI/2;
 
         for (let i=0; i<order; i++) {
             const tempAngle = angle + angleDiff*i;
-            const diffX = Math.cos(tempAngle) * radius;
-            const diffY = -Math.sin(tempAngle) * radius;
-            positions.push([origin[0] + diffX, origin[1] + diffY]);
+            const diff = new Phaser.Math.Vector2(
+                Math.cos(tempAngle) * radius,
+                -Math.sin(tempAngle) * radius
+            );
+            positions.push(origin.clone().add(diff));
         }
 
         return positions;
     }
 
-    createEdges(stones, radius, order) {
+    createEdges(stones, offsetScale, order) {
         const edgeColor = 0xEEEEEE;
         const edges = [];
         this.graphics.lineStyle(3, edgeColor, 1);
 
         for (let i=0; i<order; i++) {
-        // for (let i=0; i<3; i++) {
             const stone1 = stones[i];
             let stone2;
+
             if (i < order-1) {
                 stone2 = stones[i+1];
             } else {
                 stone2 = stones[0];
             }
+
             const startPoint = new Phaser.Math.Vector2(stone1.x, stone1.y);
             const endPoint = new Phaser.Math.Vector2(stone2.x, stone2.y);
             const offset = endPoint.clone()
                   .subtract(startPoint)
                   .normalizeRightHand()
                   .normalize()
-                  .scale(25);
-            // console.log(`offset length: ${offset.length()}`);
+                  .scale(offsetScale);
             const controlPoint = startPoint.clone()
                   .add(endPoint)
                   .scale(0.5)
                   .add(offset);
-            // console.log(`controlPoint: (${controlPoint.x}, ${controlPoint.y})`);
             const edge = new Phaser.Curves.QuadraticBezier(startPoint, controlPoint, endPoint);
+
             edge.draw(this.graphics);
             edges.push(edge);
         }
 
         return edges;
-    }
-
-    getArcParams(pos1, pos2, radius) {
-        let arcParams = {
-            x: null,
-            y: null,
-            startAngle: null,
-            endAngle: null,
-        };
-
-
-        return arcParams;
     }
 
     update() {
