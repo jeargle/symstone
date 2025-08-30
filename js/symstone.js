@@ -128,7 +128,7 @@ class PlayScene extends Phaser.Scene {
         this.sideLine = this.add.line(0, 0, 700, 0, 700, 600, lineColor).setOrigin(0);
 
         /** Stones **/
-        const order = 6;
+        const order = 9;
         const sideStepSize = 30;
         const boardRadius = 100;
 
@@ -151,7 +151,16 @@ class PlayScene extends Phaser.Scene {
         /** Edges **/
 
         // main board edges
-        this.mainPanels.board.edges = this.createEdges(this.mainPanels.board.stones, boardRadius, order);
+        this.mainPanels.board.edges = this.createEdges(
+            this.mainPanels.board.stones,
+            boardRadius,
+            order,
+        );
+        this.mainPanels.board.edges = this.createEdges(
+            this.mainPanels.board.stones.reverse(),
+            boardRadius,
+            order,
+        );
 
         // user board edges
         this.userPanels.board.edges = this.createEdges(this.userPanels.board.stones, boardRadius, order);
@@ -233,8 +242,16 @@ class PlayScene extends Phaser.Scene {
             }
             const startPoint = new Phaser.Math.Vector2(stone1.x, stone1.y);
             const endPoint = new Phaser.Math.Vector2(stone2.x, stone2.y);
-            const offset = new Phaser.Math.Vector2(5, 5);
-            const controlPoint = startPoint.clone().add(endPoint).scale(0.5);
+            const offset = endPoint.clone()
+                  .subtract(startPoint)
+                  .normalizeRightHand()
+                  .normalize()
+                  .scale(25);
+            // console.log(`offset length: ${offset.length()}`);
+            const controlPoint = startPoint.clone()
+                  .add(endPoint)
+                  .scale(0.5)
+                  .add(offset);
             // console.log(`controlPoint: (${controlPoint.x}, ${controlPoint.y})`);
             const edge = new Phaser.Curves.QuadraticBezier(startPoint, controlPoint, endPoint);
             edge.draw(this.graphics);
