@@ -119,6 +119,7 @@ class PlayScene extends Phaser.Scene {
     create() {
         let that = this;
 
+        this.graphics = this.add.graphics();
 
         /** Lines **/
         const lineColor = 0x888888;
@@ -150,10 +151,10 @@ class PlayScene extends Phaser.Scene {
         /** Edges **/
 
         // main board edges
-        this.mainPanels.board.edges = this.createEdges(this.mainPanels.board.stones);
+        this.mainPanels.board.edges = this.createEdges(this.mainPanels.board.stones, boardRadius, order);
 
-        // userBoardEdges
-        this.userPanels.board.edges = this.createEdges(this.userPanels.board.stones);
+        // user board edges
+        this.userPanels.board.edges = this.createEdges(this.userPanels.board.stones, boardRadius, order);
 
         /** Controls **/
         this.keyControls = this.input.keyboard.addKeys({
@@ -187,6 +188,8 @@ class PlayScene extends Phaser.Scene {
                 stone.setFillStyle(stoneColor);
             }
         });
+
+        return stone;
     }
 
     sidePositions(origin, stepSize, order) {
@@ -214,7 +217,43 @@ class PlayScene extends Phaser.Scene {
         return positions;
     }
 
-    createEdges(stones) {
+    createEdges(stones, radius, order) {
+        const edgeColor = 0xEEEEEE;
+        const edges = [];
+        this.graphics.lineStyle(3, edgeColor, 1);
+
+        for (let i=0; i<order; i++) {
+        // for (let i=0; i<3; i++) {
+            const stone1 = stones[i];
+            let stone2;
+            if (i < order-1) {
+                stone2 = stones[i+1];
+            } else {
+                stone2 = stones[0];
+            }
+            const startPoint = new Phaser.Math.Vector2(stone1.x, stone1.y);
+            const endPoint = new Phaser.Math.Vector2(stone2.x, stone2.y);
+            const offset = new Phaser.Math.Vector2(5, 5);
+            const controlPoint = startPoint.clone().add(endPoint).scale(0.5);
+            // console.log(`controlPoint: (${controlPoint.x}, ${controlPoint.y})`);
+            const edge = new Phaser.Curves.QuadraticBezier(startPoint, controlPoint, endPoint);
+            edge.draw(this.graphics);
+            edges.push(edge);
+        }
+
+        return edges;
+    }
+
+    getArcParams(pos1, pos2, radius) {
+        let arcParams = {
+            x: null,
+            y: null,
+            startAngle: null,
+            endAngle: null,
+        };
+
+
+        return arcParams;
     }
 
     update() {
