@@ -6,6 +6,21 @@ currentLevel = 0;
 levels = [
     {
         group: [
+            [0, 1],
+            [1, 0],
+        ],
+        stoneLayout: {
+            type: 'circle',
+        },
+        stoneIcons: ['0', '1'],
+        edges: [
+            {action: [0]},
+            {action: [1]},
+        ],
+        path: [1, 1],
+    },
+    {
+        group: [
             [0, 1, 2],
             [1, 2, 0],
             [2, 0, 1],
@@ -47,16 +62,6 @@ levels = [
         path: [1, 1, 1, 1, 1, 1],
     },
 ];
-
-class Stone {
-    constructor() {
-    }
-}
-
-class Edge {
-    constructor() {
-    }
-}
 
 class BootScene extends Phaser.Scene {
     constructor() {
@@ -154,7 +159,7 @@ class PlayScene extends Phaser.Scene {
         this.mainPanels = {
             'board': {
                 'stones': null,
-                'edges': null,
+                'edges': {},
             },
             'side': {
                 'stones': null,
@@ -163,7 +168,7 @@ class PlayScene extends Phaser.Scene {
         this.userPanels = {
             'board': {
                 'stones': null,
-                'edges': null,
+                'edges': {},
             },
             'side': {
                 'stones': null,
@@ -216,38 +221,42 @@ class PlayScene extends Phaser.Scene {
 
         // main board edges
         for (let i=1; i<level.group.length; i++) {
-            let stonePairs = [];
-            for (let j=0; j<order; j++) {
-                const endIndex = level.group[i][j];
-                stonePairs.push([
-                    this.mainPanels.board.stones[j],
-                    this.mainPanels.board.stones[endIndex],
-                ]);
-            }
+            if (level.edges[i].action.length === 1) {
+                let stonePairs = [];
+                for (let j=0; j<order; j++) {
+                    const endIndex = level.group[i][j];
+                    stonePairs.push([
+                        this.mainPanels.board.stones[j],
+                        this.mainPanels.board.stones[endIndex],
+                    ]);
+                }
 
-            this.mainPanels.board.edges = this.createEdges(
-                stonePairs,
-                edgeOffsetScale,
-                order,
-            );
+                this.mainPanels.board.edges[i] = this.createEdges(
+                    stonePairs,
+                    edgeOffsetScale,
+                    order,
+                );
+            }
         }
 
         // user board edges
         for (let i=1; i<order; i++) {
-            let stonePairs = [];
-            for (let j=0; j<order; j++) {
-                const endIndex = level.group[i][j];
-                stonePairs.push([
-                    this.userPanels.board.stones[j],
-                    this.userPanels.board.stones[endIndex],
-                ]);
-            }
+            if (level.edges[i].action.length === 1) {
+                let stonePairs = [];
+                for (let j=0; j<order; j++) {
+                    const endIndex = level.group[i][j];
+                    stonePairs.push([
+                        this.userPanels.board.stones[j],
+                        this.userPanels.board.stones[endIndex],
+                    ]);
+                }
 
-            this.mainPanels.board.edges = this.createEdges(
-                stonePairs,
-                edgeOffsetScale,
-                order,
-            );
+                this.userPanels.board.edges[i] = this.createEdges(
+                    stonePairs,
+                    edgeOffsetScale,
+                    order,
+                );
+            }
         }
 
         /** Controls **/
