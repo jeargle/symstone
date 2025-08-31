@@ -1,6 +1,62 @@
-let score, game;
+let score, levels, currentLevel, game;
 
 score = 0;
+currentLevel = 0;
+
+levels = [
+    {
+        group: [
+            [0, 1, 2],
+            [1, 2, 0],
+            [2, 0, 1],
+        ],
+        stoneLayout: {
+            type: 'circle',
+        },
+        stoneIcons: ['0', '1', '2'],
+        edges: [
+            {action: [0]},
+            {action: [1]},
+            {action: [2]},
+        ],
+        path: [1, 1, 2, 1, 1],
+    },
+    {
+        group: [
+            [0, 1, 2, 3, 4, 5],
+            [1, 2, 3, 4, 5, 0],
+            [2, 3, 4, 5, 0, 1],
+            [3, 4, 5, 0, 1, 2],
+            [4, 5, 0, 1, 2, 3],
+            [5, 0, 1, 2, 3, 4],
+        ],
+        stoneLayout: {
+            type: 'circle',
+        },
+        stones: [
+            {},
+        ],
+        edges: [
+            {action: [0]},
+            {action: [1]},
+            {action: [1, 1]},
+            {action: [1, 1, 1]},
+            {action: [1, 1, 1, 1]},
+            {action: [1, 1, 1, 1, 1]},
+        ],
+        path: [1, 1, 1, 1, 1, 1],
+    },
+];
+
+class Stone {
+    constructor() {
+    }
+}
+
+class Edge {
+    constructor() {
+    }
+}
 
 class BootScene extends Phaser.Scene {
     constructor() {
@@ -121,6 +177,9 @@ class PlayScene extends Phaser.Scene {
 
         this.graphics = this.add.graphics();
 
+        /** Level **/
+        const level = levels[currentLevel];
+
         /** Lines **/
         const lineColor = 0x888888;
 
@@ -128,7 +187,7 @@ class PlayScene extends Phaser.Scene {
         this.sideLine = this.add.line(0, 0, 700, 0, 700, 600, lineColor).setOrigin(0);
 
         /** Stones **/
-        const order = 4;
+        const order = level.group.length;
         const sideStepSize = 30;
         const boardRadius = 100;
 
@@ -156,23 +215,40 @@ class PlayScene extends Phaser.Scene {
         const edgeOffsetScale = 25;
 
         // main board edges
-        this.mainPanels.board.edges = this.createEdges(
-            this.mainPanels.board.stones,
-            edgeOffsetScale,
-            order,
-        );
-        this.mainPanels.board.edges = this.createEdges(
-            this.mainPanels.board.stones.reverse(),
-            edgeOffsetScale,
-            order,
-        );
+        for (let i=1; i<level.group.length; i++) {
+            let stonePairs = [];
+            for (let j=0; j<order; j++) {
+                const endIndex = level.group[i][j];
+                stonePairs.push([
+                    this.mainPanels.board.stones[j],
+                    this.mainPanels.board.stones[endIndex],
+                ]);
+            }
+
+            this.mainPanels.board.edges = this.createEdges(
+                stonePairs,
+                edgeOffsetScale,
+                order,
+            );
+        }
 
         // user board edges
-        this.userPanels.board.edges = this.createEdges(
-            this.userPanels.board.stones,
-            edgeOffsetScale,
-            order,
-        );
+        for (let i=1; i<order; i++) {
+            let stonePairs = [];
+            for (let j=0; j<order; j++) {
+                const endIndex = level.group[i][j];
+                stonePairs.push([
+                    this.userPanels.board.stones[j],
+                    this.userPanels.board.stones[endIndex],
+                ]);
+            }
+
+            this.mainPanels.board.edges = this.createEdges(
+                stonePairs,
+                edgeOffsetScale,
+                order,
+            );
+        }
 
         /** Controls **/
         this.keyControls = this.input.keyboard.addKeys({
@@ -235,21 +311,14 @@ class PlayScene extends Phaser.Scene {
         return positions;
     }
 
-    createEdges(stones, offsetScale, order) {
+    createEdges(stonePairs, offsetScale, order) {
         const edgeColor = 0xEEEEEE;
         const edges = [];
         this.graphics.lineStyle(3, edgeColor, 1);
 
-        for (let i=0; i<order; i++) {
-            const stone1 = stones[i];
-            let stone2;
-
-            if (i < order-1) {
-                stone2 = stones[i+1];
-            } else {
-                stone2 = stones[0];
-            }
-
+        for (const stonePair of stonePairs) {
+            const stone1 = stonePair[0];
+            const stone2 = stonePair[1];
             const startPoint = new Phaser.Math.Vector2(stone1.x, stone1.y);
             const endPoint = new Phaser.Math.Vector2(stone2.x, stone2.y);
             const offset = endPoint.clone()
