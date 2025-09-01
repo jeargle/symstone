@@ -191,6 +191,26 @@ class PlayScene extends Phaser.Scene {
         this.mainLine = this.add.line(0, 0, 0, 300, 800, 300, lineColor).setOrigin(0);
         this.sideLine = this.add.line(0, 0, 700, 0, 700, 600, lineColor).setOrigin(0);
 
+        /** Play button **/
+        const playButtonColor = 0x888888;
+
+        this.playButton = this.add.rectangle(750, 30, 20, 20, playButtonColor);
+        this.playButton.setInteractive();
+        // this.playButton.setStrokeStyle(1, 0xFFFFFF);
+        this.playButton.data = {
+            state: 'off',
+        };
+
+        this.playButton.on('pointerdown', function (pointer, localX, localY, event) {
+            if (that.playButton.data.state === 'off') {
+                that.playButton.data.state = 'on';
+                that.playButton.setFillStyle(0xEEEEEE);
+            } else {
+                that.playButton.data.state = 'off';
+                that.playButton.setFillStyle(playButtonColor);
+            }
+        });
+
         /** Stones **/
         const order = level.group.length;
         const sideStepSize = 30;
@@ -207,12 +227,12 @@ class PlayScene extends Phaser.Scene {
             .map(this.createStone, that);
 
         // main side stones
-        position = new Phaser.Math.Vector2(750, 30);
+        position = new Phaser.Math.Vector2(750, 60);
         this.mainPanels.side.stones = this.sidePositions(position, sideStepSize, order)
             .map(this.createStone, that);
 
         // user side stones
-        position = new Phaser.Math.Vector2(750, 330);
+        position = new Phaser.Math.Vector2(750, 360);
         this.userPanels.side.stones = this.sidePositions(position, sideStepSize, order)
             .map(this.createStone, that);
 
@@ -273,7 +293,7 @@ class PlayScene extends Phaser.Scene {
         let stone = this.add.circle(position.x, position.y, stoneRadius, stoneColor);
 
         stone.setInteractive();
-        stone.setStrokeStyle(1, 0x000000);
+        // stone.setStrokeStyle(1, 0xFFFFFF);
         stone.data = {
             index,
             state: 'off',
