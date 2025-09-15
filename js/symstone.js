@@ -63,26 +63,62 @@ levels = [
     },
 ];
 
+/**
+ * This class holds a group operator table.
+ * Elements are 0-indexed.
+ */
+class Group {
+
+    table = null;
+    order = 0;
+
+    constructor(table) {
+        this.table = table;
+        this.order = this.table.length;
+    }
+
+    /**
+     * Get element from the operator table.
+     * Multiplication of two elements.
+     * @param row
+     * @param column
+     * @returns table element
+     */
+    getElement(row, column) {
+        return this.table[row][column];
+    }
+
+    /**
+     * Get row elements from the operator table.
+     * Left-multiplication of the Group by one of its elements.
+     * @param row
+     * @returns row elements of the table
+     */
+    getRow(row) {
+        return this.table[row];
+    }
+}
+
 class BootScene extends Phaser.Scene {
     constructor() {
-        super('boot')
+        super('boot');
     }
 
     init(config) {
-        console.log('[BOOT] init', config)
+        console.log('[BOOT] init', config);
     }
 
     preload() {
-        console.log('[BOOT] preload')
+        console.log('[BOOT] preload');
     }
 
     create() {
-        game.scene.start('load')
-        game.scene.remove('boot')
+        game.scene.start('load');
+        game.scene.remove('boot');
     }
 
     update() {
-        console.log('[BOOT] update')
+        console.log('[BOOT] update');
     }
 }
 
@@ -184,6 +220,7 @@ class PlayScene extends Phaser.Scene {
 
         /** Level **/
         const level = levels[currentLevel];
+        const group = new Group(level.group);
 
         /** Lines **/
         const lineColor = 0x888888;
@@ -212,7 +249,7 @@ class PlayScene extends Phaser.Scene {
         });
 
         /** Stones **/
-        const order = level.group.length;
+        const order = group.order;
         const sideStepSize = 30;
         const boardRadius = 100;
 
@@ -240,11 +277,12 @@ class PlayScene extends Phaser.Scene {
         const edgeOffsetScale = 25;
 
         // main board edges
-        for (let i=1; i<level.group.length; i++) {
+        for (let i=1; i<order; i++) {
             if (level.edges[i].action.length === 1) {
                 let stonePairs = [];
                 for (let j=0; j<order; j++) {
-                    const endIndex = level.group[i][j];
+                    // const endIndex = level.group[i][j];
+                    const endIndex = group.getElement(i, j);
                     stonePairs.push([
                         this.mainPanels.board.stones[j],
                         this.mainPanels.board.stones[endIndex],
@@ -264,7 +302,8 @@ class PlayScene extends Phaser.Scene {
             if (level.edges[i].action.length === 1) {
                 let stonePairs = [];
                 for (let j=0; j<order; j++) {
-                    const endIndex = level.group[i][j];
+                    // const endIndex = level.group[i][j];
+                    const endIndex = group.getElement(i, j);
                     stonePairs.push([
                         this.userPanels.board.stones[j],
                         this.userPanels.board.stones[endIndex],
