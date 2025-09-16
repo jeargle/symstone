@@ -186,6 +186,9 @@ class TitleScene extends Phaser.Scene {
 }
 
 class PlayScene extends Phaser.Scene {
+
+    group = null;
+
     constructor() {
         super('play');
 
@@ -220,7 +223,7 @@ class PlayScene extends Phaser.Scene {
 
         /** Level **/
         const level = levels[currentLevel];
-        const group = new Group(level.group);
+        this.group = new Group(level.group);
 
         /** Lines **/
         const lineColor = 0x888888;
@@ -249,7 +252,7 @@ class PlayScene extends Phaser.Scene {
         });
 
         /** Stones **/
-        const order = group.order;
+        const order = this.group.order;
         const sideStepSize = 30;
         const boardRadius = 100;
 
@@ -282,7 +285,7 @@ class PlayScene extends Phaser.Scene {
                 let stonePairs = [];
                 for (let j=0; j<order; j++) {
                     // const endIndex = level.group[i][j];
-                    const endIndex = group.getElement(i, j);
+                    const endIndex = this.group.getElement(i, j);
                     stonePairs.push([
                         this.mainPanels.board.stones[j],
                         this.mainPanels.board.stones[endIndex],
@@ -303,7 +306,7 @@ class PlayScene extends Phaser.Scene {
                 let stonePairs = [];
                 for (let j=0; j<order; j++) {
                     // const endIndex = level.group[i][j];
-                    const endIndex = group.getElement(i, j);
+                    const endIndex = this.group.getElement(i, j);
                     stonePairs.push([
                         this.userPanels.board.stones[j],
                         this.userPanels.board.stones[endIndex],
@@ -327,6 +330,7 @@ class PlayScene extends Phaser.Scene {
     }
 
     createStone(position, index) {
+        const that = this;
         const stoneColor = 0x888888;
         const stoneRadius = 10;
         let stone = this.add.circle(position.x, position.y, stoneRadius, stoneColor);
@@ -335,6 +339,7 @@ class PlayScene extends Phaser.Scene {
         // stone.setStrokeStyle(1, 0xFFFFFF);
         stone.data = {
             index,
+            slot: index,
             state: 'off',
         };
 
@@ -346,6 +351,8 @@ class PlayScene extends Phaser.Scene {
                 stone.data.state = 'off';
                 stone.setFillStyle(stoneColor);
             }
+            console.log(`${stone.data.index}: ${that.group.getRow(stone.data.index)}`);
+            that.moveStones('user', stone.data.index);
         });
 
         return stone;
@@ -425,15 +432,20 @@ class PlayScene extends Phaser.Scene {
         }
     }
 
-    /**
-     * Add a single enemy to the screen.
-     */
-    addStone() {
-        let stone;
+    moveStones(board, element) {
+        const row = this.group.getRow(element);
+        let stones;
 
-        console.log('addStone()');
+        if (board === 'main') {
+            stones = this.mainPanels.board.stones;
+        } else if (board === 'user') {
+            stones = this.userPanels.board.stones;
+        }
 
-        stone = this.mainSideStones.getFirstDead(false);
+        for (const i in stones) {
+            const stone = stones[i];
+            console.log(`${stone.data.index}: ${stone.data.slot} -> ${row[i]}`);
+        }
     }
 
     end() {
