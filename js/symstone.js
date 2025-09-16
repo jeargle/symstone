@@ -124,17 +124,17 @@ class BootScene extends Phaser.Scene {
 
 class LoadScene extends Phaser.Scene {
     constructor() {
-        super('load')
+        super('load');
     }
 
     init(config) {
-        console.log('[LOAD] init', config)
+        console.log('[LOAD] init', config);
     }
 
     preload() {
         this.add.text(80, 160, 'loading...',
                       {font: '30px Courier',
-                       fill: '#ffffff'})
+                       fill: '#ffffff'});
 
         // Load images
 
@@ -142,46 +142,46 @@ class LoadScene extends Phaser.Scene {
     }
 
     create() {
-        game.scene.start('title')
-        game.scene.remove('load')
+        game.scene.start('title');
+        game.scene.remove('load');
     }
 
     update() {
-        console.log('[LOAD] update')
+        console.log('[LOAD] update');
     }
 }
 
 class TitleScene extends Phaser.Scene {
     constructor() {
-        super('title')
+        super('title');
     }
 
     init(config) {
-        console.log('[TITLE] init', config)
+        console.log('[TITLE] init', config);
     }
 
     preload() {
-        console.log('[TITLE] preload')
+        console.log('[TITLE] preload');
     }
 
     create() {
         this.add.text(80, 160, 'SYMSTONE',
                       {font: '50px Courier',
-                       fill: '#ffffff'})
+                       fill: '#ffffff'});
         this.add.text(80, 240, 'press "W" to start',
                       {font: '30px Courier',
-                       fill: '#ffffff'})
+                       fill: '#ffffff'});
 
-        this.input.keyboard.on('keydown-W', this.start, this)
+        this.input.keyboard.on('keydown-W', this.start, this);
     }
 
     update() {
-        console.log('[TITLE] update')
+        console.log('[TITLE] update');
     }
 
     start() {
-        console.log('[TITLE] start')
-        game.scene.switch('title', 'play')
+        console.log('[TITLE] start');
+        game.scene.switch('title', 'play');
     }
 }
 
@@ -456,30 +456,30 @@ class PlayScene extends Phaser.Scene {
 
 class EndScene extends Phaser.Scene {
     constructor() {
-        super('end')
+        super('end');
     }
 
     create() {
         this.add.text(600, 10, 'Score: ' + score,
                       {font: '30px Courier',
-                       fill: '#ffffff'})
+                       fill: '#ffffff'});
         this.add.text(80, 160, 'YOU WIN',
                       {font: '50px Courier',
-                       fill: '#ffffff'})
+                       fill: '#ffffff'});
         this.add.text(80, 240, 'press "W" to restart',
                       {font: '30px Courier',
-                       fill: '#ffffff'})
+                       fill: '#ffffff'});
 
-        this.input.keyboard.on('keydown-W', this.restart, this)
+        this.input.keyboard.on('keydown-W', this.restart, this);
     }
 
     update() {
-        console.log('[END] update')
+        console.log('[END] update');
     }
 
     restart() {
-        console.log('[END] restart')
-        game.scene.switch('end', 'title')
+        console.log('[END] restart');
+        game.scene.switch('end', 'title');
     }
 }
 
@@ -496,7 +496,7 @@ const gameConfig = {
         PlayScene,
         EndScene
     ]
-}
+};
 
-game = new Phaser.Game(gameConfig)
-game.scene.start('boot', { someData: '...arbitrary data' })
+game = new Phaser.Game(gameConfig);
+game.scene.start('boot', { someData: '...arbitrary data' });
