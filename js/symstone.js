@@ -321,6 +321,26 @@ class PlayScene extends Phaser.Scene {
             }
         }
 
+        this.stonePath = {
+            t: 0,
+            vec: new Phaser.Math.Vector2()
+        };
+
+        this.stoneTween = this.tweens.add({
+            targets: this.stonePath,
+            t: 1,
+            ease: 'Sine.easeInOut',
+            duration: 2000,
+            // yoyo: true,
+            repeat: 0,
+            paused: true,
+            persist: true,
+        });
+        this.stoneTween.on('complete', function(tween, targets){
+            this.movingStones = null;
+        });
+        this.movingStones = null;
+
         /** Controls **/
         this.keyControls = this.input.keyboard.addKeys({
             'end': Phaser.Input.Keyboard.KeyCodes.E,
@@ -352,7 +372,11 @@ class PlayScene extends Phaser.Scene {
                 stone.setFillStyle(stoneColor);
             }
             console.log(`${stone.data.index}: ${that.group.getRow(stone.data.index)}`);
-            that.moveStones('user', stone.data.index);
+            that.movingStones = {
+                board: 'user',
+                element: stone.data.index,
+            };
+            that.stoneTween.play();
         });
 
         return stone;
@@ -430,21 +454,35 @@ class PlayScene extends Phaser.Scene {
         if (pointer.leftButtonDown()) {
             console.log(`Left Button (${pointer.worldX}, ${pointer.worldY})`);
         }
+
+        if (this.movingStones != null) {
+            this.moveStones();
+        }
     }
 
-    moveStones(board, element) {
+    moveStones() {
+        const board = this.movingStones.board;
+        const element = this.movingStones.element;
         const row = this.group.getRow(element);
-        let stones;
+        let stones, edges, stone, edge, point;
 
         if (board === 'main') {
             stones = this.mainPanels.board.stones;
+            edges = this.mainPanels.board.edges;
         } else if (board === 'user') {
             stones = this.userPanels.board.stones;
+            edges = this.userPanels.board.edges;
         }
 
+        // console.log(edges);
+
         for (const i in stones) {
-            const stone = stones[i];
-            console.log(`${stone.data.index}: ${stone.data.slot} -> ${row[i]}`);
+            stone = stones[i];
+            // console.log(`${stone.data.index}: ${stone.data.slot} -> ${row[i]}`);
+            edge = edges[element][stone.data.slot];
+            point = edge.getPoint(this.stonePath.t, this.stonePath.vec);
+            stone.x = point.x;
+            stone.y = point.y;
         }
     }
 
