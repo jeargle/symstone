@@ -1,7 +1,7 @@
 let score, levels, currentLevel, game;
 
 score = 0;
-currentLevel = 0;
+currentLevel = 2;
 
 levels = [
     {
@@ -330,14 +330,23 @@ class PlayScene extends Phaser.Scene {
             targets: this.stonePath,
             t: 1,
             ease: 'Sine.easeInOut',
-            duration: 2000,
+            duration: 1000,
             // yoyo: true,
             repeat: 0,
             paused: true,
             persist: true,
         });
         this.stoneTween.on('complete', function(tween, targets){
-            this.movingStones = null;
+            const element = that.movingStones.element;
+            const action = level.edges[element].action;
+            that.movingStones.actionIndex += 1;
+
+            if (that.movingStones.actionIndex < action.length) {
+                // Continue processing action.
+                tween.play();
+            } else {
+                that.movingStones = null;
+            }
         });
         this.movingStones = null;
 
@@ -371,10 +380,11 @@ class PlayScene extends Phaser.Scene {
                 stone.data.state = 'off';
                 stone.setFillStyle(stoneColor);
             }
-            console.log(`${stone.data.index}: ${that.group.getRow(stone.data.index)}`);
+            // console.log(`${stone.data.index}: ${that.group.getRow(stone.data.index)}`);
             that.movingStones = {
                 board: 'user',
                 element: stone.data.index,
+                actionIndex: 0,
             };
             that.stoneTween.play();
         });
@@ -461,9 +471,12 @@ class PlayScene extends Phaser.Scene {
     }
 
     moveStones() {
+        const level = levels[currentLevel];
         const board = this.movingStones.board;
         const element = this.movingStones.element;
+        const actionIndex = this.movingStones.actionIndex;
         const row = this.group.getRow(element);
+        const action = level.edges[element].action;
         let stones, edges, stone, edge, point;
 
         if (board === 'main') {
@@ -479,7 +492,7 @@ class PlayScene extends Phaser.Scene {
         for (const i in stones) {
             stone = stones[i];
             // console.log(`${stone.data.index}: ${stone.data.slot} -> ${row[i]}`);
-            edge = edges[element][stone.data.slot];
+            edge = edges[action[actionIndex]][stone.data.slot];
             point = edge.getPoint(this.stonePath.t, this.stonePath.vec);
             stone.x = point.x;
             stone.y = point.y;
