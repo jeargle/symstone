@@ -5,6 +5,7 @@ currentLevel = 2;
 
 levels = [
     {
+        name: 'C2',
         group: [
             [0, 1],
             [1, 0],
@@ -20,6 +21,7 @@ levels = [
         path: [1, 1],
     },
     {
+        name: 'C3',
         group: [
             [0, 1, 2],
             [1, 2, 0],
@@ -37,6 +39,51 @@ levels = [
         path: [1, 1, 2, 1, 1],
     },
     {
+        name: 'C4',
+        group: [
+            [0, 1, 2, 3],
+            [1, 2, 3, 0],
+            [2, 3, 0, 1],
+            [3, 0, 1, 2],
+        ],
+        stoneLayout: {
+            type: 'circle',
+        },
+        stones: [
+            {},
+        ],
+        edges: [
+            {action: [0]},
+            {action: [1]},
+            {action: [2]},
+            {action: [3]},
+        ],
+        path: [1, 1, 1, 1],
+    },
+    {
+        name: 'Z2xZ2',
+        group: [
+            [0, 1, 2, 3],
+            [1, 0, 3, 2],
+            [2, 3, 0, 1],
+            [3, 2, 1, 0],
+        ],
+        stoneLayout: {
+            type: 'circle',
+        },
+        stones: [
+            {},
+        ],
+        edges: [
+            {action: [0]},
+            {action: [1]},
+            {action: [2]},
+            {action: [3]},
+        ],
+        path: [1, 1, 1, 1],
+    },
+    {
+        name: 'C6',
         group: [
             [0, 1, 2, 3, 4, 5],
             [1, 2, 3, 4, 5, 0],
